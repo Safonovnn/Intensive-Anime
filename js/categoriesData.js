@@ -1,4 +1,8 @@
-const mainData = () => {
+const categoriesData = () => {
+  //отключение прелодаре
+  setTimeout(() => {
+    preloder.classList.remove("active");
+  }, 500);
   //функция для вывода аниме по жанрам в выпадающем меню
   const renderGanreList = (drop) => {
     const dropdownBlock = document.querySelector(".header__menu .dropdown");
@@ -15,14 +19,18 @@ const mainData = () => {
 
   //функция для вывода аниме по жанрам
   const renderAnimeGanre = (arr, ganr) => {
-    const wrapper = document.querySelector(".product .col-lg-8");
+    //добавление и удаление класса для прелодер
+    setTimeout(() => {
+      preloder.classList.remove("active");
+    }, 500);
+    const wrapper = document.querySelector(".product-page .col-lg-8");
     wrapper.innerHTML = "";
 
     ganr.forEach((item) => {
       const productBlock = document.createElement("div");
       const listBlock = document.createElement("div");
 
-      const list = arr.filter((el) => el.ganre === item);
+      const list = arr.filter((el) => el.tags.includes(item));
 
       listBlock.classList.add("row");
       productBlock.classList.add("mb-5");
@@ -121,6 +129,9 @@ const mainData = () => {
       //переменная для коллекции жанров
       const ganres = new Set();
 
+      //определине жанра по url
+      const params = new URLSearchParams(window.location.search).get("ganre");
+
       //добавление в коллекцию жанров
       data.forEach((el) => {
         ganres.add(el.ganre);
@@ -128,9 +139,15 @@ const mainData = () => {
 
       //вызов функции
       renderTopAnime(data.sort((a, b) => b.views - a.views).slice(0, 5));
-      renderAnimeGanre(data, ganres);
+
+      //проверяем условие какой жанр выводится
+      if (params) {
+        renderAnimeGanre(data, [params]);
+      } else {
+        renderAnimeGanre(data, ganres);
+      }
+
       renderGanreList(ganres);
     });
 };
-
-mainData();
+categoriesData();
